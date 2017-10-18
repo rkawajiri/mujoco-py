@@ -108,9 +108,7 @@ int initOpenGL(int device_id)
 
     // make context current, no surface (let OpenGL handle FBO)
     if( eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx)!=EGL_TRUE ) {
-        eglDestroyContext(eglDpy, eglCtx);
-        printf("Could not make EGL context current\n");
-        return -8;
+        printf("WARN: Could not make EGL context current: %x\n", eglGetError());
     }
 
     GLenum err = glewInit();
