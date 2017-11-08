@@ -129,7 +129,7 @@ class MjViewer(MjViewerBasic):
         The simulator to display.
     """
 
-    def __init__(self, sim):
+    def __init__(self, sim, render_every_frame=False):
         super().__init__(sim)
 
         self._ncam = sim.model.ncam
@@ -151,7 +151,7 @@ class MjViewer(MjViewerBasic):
         # two.
         self._run_speed = 1.0
         self._loop_count = 0
-        self._render_every_frame = False
+        self._render_every_frame = render_every_frame
 
         self._show_mocap = True  # Show / hide mocap bodies.
         self._transparent = False  # Make everything transparent.
