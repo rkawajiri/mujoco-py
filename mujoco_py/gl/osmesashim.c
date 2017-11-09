@@ -4,10 +4,10 @@
 OSMesaContext ctx;
 
 // this size was picked pretty arbitrarily
-int BUFFER_WIDTH = 1024;
-int BUFFER_HEIGHT = 1024;
+int BUFFER_WIDTH = 4096;
+int BUFFER_HEIGHT = 4096;
 // 4 channels for RGBA
-unsigned char buffer[1024 * 1024 * 4];
+unsigned char buffer[4096 * 4096 * 4];
 
 int is_initialized = 0;
 
