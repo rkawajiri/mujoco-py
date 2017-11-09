@@ -38,6 +38,7 @@ cdef class MjSim(object):
     userdata_names : list of strings or None
         This is a convenience parameter which is just set on the model.
         Equivalent to calling ``model.set_userdata_names``
+    render_callback : callback for rendering.
     """
     # MjRenderContext for rendering camera views.
     cdef readonly list render_contexts
@@ -61,9 +62,12 @@ cdef class MjSim(object):
     cdef readonly dict extras
     # Function pointer for substep callback, stored as uintptr
     cdef readonly uintptr_t substep_callback_ptr
+    # Callback executed before rendering.
+    cdef public object render_callback
 
     def __cinit__(self, PyMjModel model, PyMjData data=None, int nsubsteps=1,
-                  udd_callback=None, substep_callback=None, userdata_names=None):
+                  udd_callback=None, substep_callback=None, userdata_names=None,
+                  render_callback=None):
         self.nsubsteps = nsubsteps
         self.model = model
         if data is None:
@@ -80,6 +84,7 @@ cdef class MjSim(object):
         self._render_context_window = None
         self.udd_state = None
         self.udd_callback = udd_callback
+        self.render_callback = render_callback
         self.extras = {}
         self.set_substep_callback(substep_callback, userdata_names)
 
@@ -100,7 +105,7 @@ cdef class MjSim(object):
         with wrap_mujoco_warning():
             mj_forward(self.model.ptr, self.data.ptr)
 
-    def step(self):
+    def step(self, with_udd=True):
         """
         Advances the simulation by calling ``mj_step``.
 
@@ -108,7 +113,8 @@ cdef class MjSim(object):
         :meth:`.forward` before :meth:`.step` if their ``udd_callback`` requires access to MuJoCo state
         set during the forward dynamics.
         """
-        self.step_udd()
+        if with_udd:
+            self.step_udd()
 
         with wrap_mujoco_warning():
             for _ in range(self.nsubsteps):
